@@ -1,14 +1,29 @@
-const Boom = require('@hapi/boom');
-const Model = require('../model/transaction.model');
+const boom = require('@hapi/boom');
+const Model = require('../data/models/transaction.model');
 
-const TransactionService = {
+class TransactionService {
+    constructor() { }
+
     async createDB(data) {
-        const model = new Model(data);
-        model.save();
-        return data;
-    },
+        const newData = {
+            title: data.title,
+            description: data.description,
+            amount: data.amount,
+            date: data.date,
+            type: data.type,
+            category: {
+                name: data.category?.name || 'General',
+                description: data.category?.description || 'General category',
+                color: data.category?.color || '#000000',
+                icon: data.category?.icon || 'default-icon',
+            },
+        }
+        const model = new Model(newData);
+        await model.save();
+        return model;
+    }
 
-    async findDB() {
+    async findDB(limit, filter = {}) {
         let transactionDB = await Model.find(filter);
         transactionDB = limit
             ? transactionDB.filter((item, index) => item && index < limit)
@@ -18,47 +33,36 @@ const TransactionService = {
         else if (transactionDB.length <= 0)
             throw boom.notFound('No se encontro ningún registro');
         return transactionDB;
-    },
+    }
 
     async findOneDB(id) {
-        const transaction = await Model.findOne({
-            _id: id,
-        });
+        const transaction = await Model.findOne({ _id: id });
         if (transaction == undefined || transaction == null)
             throw boom.notFound('No se encontro catalogo');
-        else if (transaction.length <= 0)
-            throw boom.notFound('No se encontro ningún registro');
         return transaction;
-    },
+    }
 
     async updateDB(id, changes) {
-        let transaction = await Model.findOne({
-            _id: id,
-        });
-        let transactionOriginal = transaction;
+        let transaction = await Model.findOne({ _id: id });
+        const transactionOriginal = { ...transaction._doc };
         const { title, amount, date } = changes;
         transaction.title = title;
         transaction.amount = amount;
         transaction.date = date;
-        transaction.save();
+        await transaction.save();
 
         return {
             original: transactionOriginal,
             actualizado: transaction,
         };
-    },
+    }
 
     async deleteDB(id) {
-        let transaction = await Model.findOne({
-            _id: id,
-        });
-        const { deletedCount } = await Model.deleteOne({
-            _id: id,
-        });
-        if (deletedCount <= 0)
-            throw boom.notFound('El registro seleccionado no existe');
+        let transaction = await Model.findOne({ _id: id });
+        const { deletedCount } = await Model.deleteOne({ _id: id });
+        if (deletedCount <= 0) throw boom.notFound('El registro seleccionado no existe');
         return transaction;
-    },
-};
+    }
+}
 
 module.exports = TransactionService;

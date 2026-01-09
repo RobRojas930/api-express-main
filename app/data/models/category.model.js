@@ -6,6 +6,9 @@ const categorySchema = new Schema({
   id: mongoose.Types.ObjectId,
   idProduct: String,
   name: String,
+  description: String,
+  color: String,
+  icon: String,
 });
-const model = mongoose.model('categories', categorySchema);
-module.exports = model;
+const Model = mongoose.model('categories', categorySchema);
+module.exports = { Model, categorySchema };

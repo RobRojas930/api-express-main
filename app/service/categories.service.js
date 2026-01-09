@@ -1,9 +1,9 @@
 // eslint-disable-next-line no-unused-vars
 const boom = require('@hapi/boom');
-const Model = require('./../data/models/category.model');
+const { Model } = require('./../data/models/category.model');
 
 class CategoryService {
-  constructor() {}
+  constructor() { }
 
   async createDB(data) {
     const model = new Model(data);

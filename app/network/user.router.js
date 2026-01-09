@@ -9,6 +9,24 @@ const { loginDto, registerDto } = require('../data/dtos/user.dto');
 
 const router = express.Router();
 
+
+
+router.get('/', async (req, res, next) => {
+  try {
+    const { limit } = req.query;
+    const filter = req.body;
+    const data = await service.findDB(limit, filter);
+    res.json({
+      success: true,
+      message: 'Listo',
+      data: data,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+
 //SE USA NEXT PARA ACCEDER AL SIGUIENTE MIDDLEWARE
 router.post(
   '/register',
@@ -37,16 +55,16 @@ router.post(
   async (req, res, next) => {
     try {
       const { email, password } = req.body;
-      const user = await service.findOneDB({email:email}); //FILTRO SELECT DEL PASSWORD
+      const user = await service.findOneDB({ email: email }); //FILTRO SELECT DEL PASSWORD
       if (!user) {
         throw boom.notFound('No se encontro usuario');
-      }
+      }Arturo
       const hashPassword = user.get('password'); //NO SE PUEDE ACCEDER DIRECTAMENTE A LA PROPIEDAD
       const check = await compare(password, hashPassword);
       if (!check) {
         throw boom.unauthorized('No se encontro usuario');
       }
-      user.set('password', undefined, {strict: false});
+      user.set('password', undefined, { strict: false });
       res.json({
         success: true,
         token: await signToken(user),

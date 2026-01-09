@@ -4,15 +4,16 @@ const boom = require('@hapi/boom');
 const Model = require('../data/models/budget.model');
 
 class BudgetService {
-    async findDB(data) {
-        let response = {};
-        let { limit, filter } = data;
-        let budgets = await Model.find(filter);
-        response['budgets'] = limit
-            ? budgets.filter((item, index) => item && index < limit)
-            : budgets;
-
-        return response;
+    async findDB(limit, filter = {}) {
+        let budgetDB = await Model.find(filter);
+        budgetDB = limit
+            ? budgetDB.filter((item, index) => item && index < limit)
+            : budgetDB;
+        if (budgetDB == undefined || budgetDB == null)
+            throw boom.notFound('No se encontro catalogo');
+        else if (budgetDB.length <= 0)
+            throw boom.notFound('No se encontro ningún registro');
+        return budgetDB;
     }
 
     async findOneDB(id) {

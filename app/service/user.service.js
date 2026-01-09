@@ -2,7 +2,7 @@ const boom = require('@hapi/boom');
 const Model = require('../data/models/user.model');
 
 class UserService {
-  constructor() {}
+  constructor() { }
 
   async createDB(data) {
 
@@ -11,18 +11,22 @@ class UserService {
       throw boom.unauthorized('Ya existe un usuario con ese correo y nombre de usuario');
     }
     const userData = await Model.create(data);
-    userData.set("password", undefined, {strict: false});
+    userData.set("password", undefined, { strict: false });
     return userData;
   }
 
-  async findDB(data) {
-    let { limit, filter } = data;
-    let UsersDB = await Model.find(filter);
-    UsersDB = limit
-      ? UsersDB.filter((item, index) => item && index < limit)
-      : UsersDB;
-    return UsersDB;
+  async findDB(limit, filter) {
+    let userDB = await Model.find(filter);
+    userDB = limit
+      ? userDB.filter((item, index) => item && index < limit)
+      : userDB;
+    if (userDB == undefined || userDB == null)
+      throw boom.notFound('No se encontro catalogo');
+    else if (userDB.length <= 0)
+      throw boom.notFound('No se encontro ningún registro');
+    return userDB;
   }
+  
   async findOneDB(data) {
     const User = await Model.findOne(data).select('password name role email');
     if (User == undefined || User == null)

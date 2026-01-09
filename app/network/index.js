@@ -5,6 +5,8 @@ const storageRouter = require('./storage.router');
 const postRouter = require('./post.router');
 const promoRouter = require('./promo.router');
 const userRouter = require('./user.router');
+const budgetRouter = require('./budget.router');
+const transactionRouter = require('./transaction.router');
 
 function routerApi(app) {
   const router = express.Router();
@@ -15,8 +17,8 @@ function routerApi(app) {
   router.use('/post', postRouter);
   router.use('/promo', promoRouter);
   router.use('/user', userRouter);
-  router.use('/budget', require('./budget.router'));
-  router.use('/transaction', require('./transaction.router'));
+  router.use('/budget', budgetRouter);
+  router.use('/transaction', transactionRouter);
 }
 
 module.exports = routerApi;
