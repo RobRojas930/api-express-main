@@ -2,6 +2,9 @@ const express = require('express');
 const boom = require('@hapi/boom');
 const UserService = require('../service/user.service');
 const service = new UserService();
+const TransactionService = require('../service/transaction.service');
+const transactionService = new TransactionService();
+const { getTransactionIdDto } = require('../data/dtos/transaction.dto');
 const validatorHandler = require('./middlewares/validator.handler');
 const { encrypt, compare } = require('../utils/password.handler');
 const { signToken } = require('../utils/jwt.handler');
@@ -58,7 +61,7 @@ router.post(
       const user = await service.findOneDB({ email: email }); //FILTRO SELECT DEL PASSWORD
       if (!user) {
         throw boom.notFound('No se encontro usuario');
-      }Arturo
+      }
       const hashPassword = user.get('password'); //NO SE PUEDE ACCEDER DIRECTAMENTE A LA PROPIEDAD
       const check = await compare(password, hashPassword);
       if (!check) {
@@ -76,5 +79,25 @@ router.post(
     }
   }
 );
+
+router.get('/dashboard/:id', validatorHandler(getTransactionIdDto, 'params'),
+  async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const filter = req.query;
+      const dataDashboard = await transactionService.getDataDashboard(id, filter);
+      res.json({
+        success: true,
+        message: 'Listo',
+        data: dataDashboard,
+      });
+    }
+    catch (error) {
+      next(error);
+    }
+  });
+
+
+
 
 module.exports = router;

@@ -6,12 +6,26 @@ class CategoryService {
   constructor() { }
 
   async createDB(data) {
-    const model = new Model(data);
+    const newData = {
+      categoryId: data.categoryId || '',
+      name: data.name || 'General',
+      description: data.description || 'General category',
+      color: data.color || '#000000',
+      icon: data.icon || 'default-icon',
+      userId: data.userId,
+    }
+    const model = new Model(newData);
     model.save();
-    return data;
+    return newData;
   }
 
   async findDB(limit, filter) {
+    let filterData = { ...filter };
+    if (filter != {}) {
+      if (filter['userId']) {
+        filterData.userId = filter['userId'];
+      }
+    }
     let categoriesDB = await Model.find(filter);
     categoriesDB = limit
       ? categoriesDB.filter((item, index) => item && index < limit)

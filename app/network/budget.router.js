@@ -13,8 +13,25 @@ const router = express.Router();
 router.get('/', async (req, res, next) => {
     try {
         const { limit } = req.query;
-        const filter = req.body;
+        const filter = req.query;
         const data = await service.findDB(limit, filter);
+        res.json({
+            success: true,
+            message: 'Listo',
+            data: data,
+        });
+    } catch (error) {
+        next(error);
+    }
+});
+
+
+
+router.get('/data', async (req, res, next) => {
+    try {
+        const { limit } = req.query;
+        const filter = req.query;
+        const data = await service.getBudgetData(filter);
         res.json({
             success: true,
             message: 'Listo',
@@ -77,10 +94,11 @@ router.patch(
     }
 );
 
-router.delete('/:id', async (req, res) => {
-    const { id } = req.params;
-    const resp = await service.deleteDB(id);
-    res.json(resp);
-});
+router.delete('/:id', validatorHandler(getBudgetIdDto, 'params'),
+    async (req, res) => {
+        const { id } = req.params;
+        const resp = await service.deleteDB(id);
+        res.json(resp);
+    });
 
 module.exports = router;

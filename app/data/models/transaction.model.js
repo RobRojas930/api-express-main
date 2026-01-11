@@ -10,6 +10,7 @@ const transactionSchema = new Schema({
     amount: Number,
     date: Date,
     type: String,
+    userId: String,
     category: [categorySchema],
 });
 const model = mongoose.model('transaction', transactionSchema);

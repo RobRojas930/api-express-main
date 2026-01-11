@@ -2,10 +2,26 @@
 const boom = require('@hapi/boom');
 
 const Model = require('../data/models/budget.model');
+const TransactionModel = require('../data/models/transaction.model');
 
 class BudgetService {
     async findDB(limit, filter = {}) {
-        let budgetDB = await Model.find(filter);
+
+        let filterData = { ...filter };
+        if (filter != {}) {
+            if (filter['startDate'] && filter['endDate']) {
+                const fechaInicio = new Date(filter['startDate']);
+                const fechaFin = new Date(filter['endDate']);
+                filterData.date = { $gte: fechaInicio, $lte: fechaFin };
+                delete filterData.startDate;
+                delete filterData.endDate;
+            }
+            if (filter['userId']) {
+                filterData.userId = filter['userId'];
+            }
+        }
+
+        let budgetDB = await Model.find(filterData);
         budgetDB = limit
             ? budgetDB.filter((item, index) => item && index < limit)
             : budgetDB;
@@ -61,6 +77,49 @@ class BudgetService {
         if (deletedCount <= 0)
             throw boom.notFound('El registro seleccionado no existe');
         return budget;
+    }
+
+    async getBudgetData(filter = {}) {
+        let filterData = { ...filter };
+        if (filter != {}) {
+            if (filter['startDate'] && filter['endDate']) {
+                const fechaInicio = new Date(filter['startDate']);
+                const fechaFin = new Date(filter['endDate']);
+                filterData.date = { $gte: fechaInicio, $lte: fechaFin };
+                delete filterData.startDate;
+                delete filterData.endDate;
+            }
+            if (filter['userId']) {
+                filterData.userId = filter['userId'];
+            }
+
+        }
+
+        const budgets = await Model.find({ ...filterData });
+        for (const budget of budgets) {
+            // Buscar todas las transacciones de tipo expense del usuario
+            const transactions = await TransactionModel.find({
+                userId: budget.userId,
+                type: 'expense',
+                ...filterData
+            }).lean();
+
+            // Filtrar por categoryId usando optional chaining
+            const transactionsByCategoryId = transactions.filter(t => {
+                // Verificar si category es array o objeto
+                const categoryId = t.category[0]?.categoryId.toString() || t.category?.categoryId?.toString();
+                return categoryId === budget.categoryId;
+            });
+
+            const totalAmount = transactionsByCategoryId.reduce((acc, curr) => acc + curr.amount, 0);
+
+            budget.currentAmount = budget.initialAmount - totalAmount;
+            budget.percentage = ((budget.initialAmount - budget.currentAmount) / budget.initialAmount * 100).toFixed(2);
+
+            await budget.save();
+        }
+
+        return budgets;
     }
 }
 

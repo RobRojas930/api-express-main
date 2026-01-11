@@ -1,8 +1,8 @@
 const express = require('express');
 const TransactionService = require('../service/transaction.service');
 const validatorHandler = require('../network/middlewares/validator.handler');
-const checkRolHandler = require('../network/middlewares/checkRol.handler');
-const authHandler = require('./middlewares/auth.handler');
+// const checkRolHandler = require('../network/middlewares/checkRol.handler');
+// const authHandler = require('./middlewares/auth.handler');
 
 const {
     createTransactionDto,
@@ -19,7 +19,7 @@ router.get('/',
     async (req, res, next) => {
         try {
             const { limit } = req.query;
-            const filter = req.body;
+            const filter = req.query;
             const data = await service.findDB(limit, filter);
             res.json({
                 success: true,
@@ -30,6 +30,8 @@ router.get('/',
             next(error);
         }
     });
+
+
 
 router.get(
     '/:id',

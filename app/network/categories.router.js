@@ -15,7 +15,7 @@ const router = express.Router();
 router.get('/', async (req, res, next) => {
   try {
     const { limit } = req.query;
-    const filter = req.body;
+    const filter = req.query;
     const data = await service.findDB(limit, filter);
     res.json({
       success: true,
@@ -29,7 +29,7 @@ router.get('/', async (req, res, next) => {
 
 router.get(
   '/:id',
-  validatorHandler(createCategoryDto, 'params'),
+  validatorHandler(getCategoryIdDto, 'params'),
   async (req, res, next) => {
     try {
       const { id } = req.params;

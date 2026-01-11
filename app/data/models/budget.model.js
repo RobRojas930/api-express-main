@@ -8,7 +8,10 @@ const budgetSchema = new Schema({
     title: String,
     initialAmount: Number,
     currentAmount: Number,
-    idCategory: String
+    categoryId: String,
+    userId: String,
+    percentage: Number,
+    color: String,
 });
 const model = mongoose.model('budget', budgetSchema);
 module.exports = model;
