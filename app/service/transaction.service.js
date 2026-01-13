@@ -133,7 +133,7 @@ class TransactionService {
         const totalExpensesAmount = totalExpenses.reduce((acc, curr) => acc + curr.amount, 0);
         for (const category of categories) {
             const totalByCategory = await Model.aggregate([
-                { $match: { userId: userId, "category.name": category.name, ...filterData } },
+                { $match: { userId: userId, "category.name": category.name, type: 'expense', ...filterData } },
                 { $group: { _id: null, total: { $sum: "$amount" } } }
             ]);
             categoriesData.push({
@@ -155,6 +155,121 @@ class TransactionService {
             totalSaved: totalSaved,
             categories: categoriesData,
         };
+    }
+
+    async getHistoryTransactions(userId, filter = {}) {
+
+        let filterData = { ...filter };
+
+        if (filter != {}) {
+            if (filter['startDate'] && filter['endDate']) {
+                const fechaInicio = new Date(filter['startDate']);
+                const fechaFin = new Date(filter['endDate']);
+                filterData.date = { $gte: fechaInicio, $lte: fechaFin };
+                delete filterData.startDate;
+                delete filterData.endDate;
+            }
+        }
+
+
+        const transactions = await Model.find({ userId: userId })
+            .sort({ date: -1 });
+
+
+        const totalExpenseByMonth = await Model.aggregate([
+            { $match: { userId: userId, type: 'expense', ...filterData } }
+            ,
+            { $group: { _id: { month: { $month: "$date" }, year: { $year: "$date" } }, total: { $sum: "$amount" } } },
+            { $sort: { "_id.year": -1, "_id.month": -1 } }
+        ]);
+
+        const totalIncomeByMonth = await Model.aggregate([
+            { $match: { userId: userId, type: 'income', ...filterData } }
+            ,
+            { $group: { _id: { month: { $month: "$date" }, year: { $year: "$date" } }, total: { $sum: "$amount" } } },
+            { $sort: { "_id.year": -1, "_id.month": -1 } }
+        ]);
+
+
+        const countTransactions = transactions.length;
+        const totalTransactionsAmount = transactions.reduce((acc, curr) => acc + curr.amount, 0);
+
+        const countTransactionsByMonth = await Model.aggregate([
+            {
+                $match: { userId: userId, ...filterData }
+            },
+            {
+                $group: {
+                    _id: { month: { $month: "$date" }, year: { $year: "$date" } },
+                    count: { $sum: 1 },
+                }
+            },
+            { $sort: { "_id.year": -1, "_id.month": -1 } }
+        ]);
+
+        const totalTransactionsByMonth = await Model.aggregate([
+            {
+                $match: { userId: userId, ...filterData }
+            },
+            {
+                $group: {
+                    _id: { month: { $month: "$date" }, year: { $year: "$date" } },
+                    totalAmount: { $sum: "$amount" },
+                }
+            },
+            { $sort: { "_id.year": -1, "_id.month": -1 } }
+        ]);
+
+
+
+
+        const transactionsByCategory =
+            await Model.aggregate([
+                {
+                    $match: { userId: userId, ...filterData }
+                },
+                {
+                    $group: {
+                        _id: "$category.name",
+                        color: { $first: "$category.color" },
+                        count: { $sum: 1 },
+                        totalAmount: { $sum: "$amount" }
+                    }
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        category: "$_id",
+                        color: 1,
+                        count: 1,
+                        totalAmount: 1
+                    }
+                },
+                { $sort: { totalAmount: -1 } }
+            ]);
+
+        // Transformar el resultado para que category sea un string directo
+        const formattedTransactionsByCategory = transactionsByCategory.map(item => ({
+            category: Array.isArray(item.category) ? item.category[0] : item.category,
+            count: item.count,
+            color: Array.isArray(item.color) ? item.color[0] : item.color,
+            totalAmount: item.totalAmount
+        }));
+
+
+        return {
+            countTransactions: countTransactions,
+            totalTransactionsAmount: totalTransactionsAmount,
+
+            totalExpenseByMonth: totalExpenseByMonth[0] ? totalExpenseByMonth[0].total : 0,
+            totalIncomeByMonth: totalIncomeByMonth[0] ? totalIncomeByMonth[0].total : 0,
+
+            countTransactionsByMonth: countTransactionsByMonth[0] ? countTransactionsByMonth[0].count : 0,
+            totalTransactionsByMonth: totalTransactionsByMonth[0] ? totalTransactionsByMonth[0].totalAmount : 0,
+
+            transactionsByCategory: formattedTransactionsByCategory,
+        }
+
     }
 }
 

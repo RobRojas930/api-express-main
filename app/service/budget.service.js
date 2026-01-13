@@ -44,7 +44,18 @@ class BudgetService {
     }
 
     async createDB(data) {
-        const budget = new Model(data);
+
+        const newData = 
+        {
+            title: data.title,
+            initialAmount: data.initialAmount,
+            currentAmount: data.currentAmount || data.initialAmount,
+            percentage: data.percentage || 0,
+            userId: data.userId,
+            categoryId: data.categoryId,
+            color: data.color,
+        }
+        const budget = new Model(newData);
         await budget.save();
         return data;
     }

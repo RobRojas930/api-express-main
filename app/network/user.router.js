@@ -99,5 +99,25 @@ router.get('/dashboard/:id', validatorHandler(getTransactionIdDto, 'params'),
 
 
 
+router.get('/history/:id', validatorHandler(getTransactionIdDto, 'params'),
+  async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const filter = req.query;
+      const historyData = await transactionService.getHistoryTransactions(id, filter);
+      res.json({
+        success: true,
+        message: 'Listo',
+        data: historyData,
+      });
+    }
+    catch (error) {
+      next(error);
+    }
+  });
+
+
+
+
 
 module.exports = router;
