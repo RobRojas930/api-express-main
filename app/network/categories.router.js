@@ -71,7 +71,7 @@ router.patch(
     try {
       const { id } = req.params;
       const body = req.body;
-      const data = await service.update(id, body);
+      const data = await service.updateDB(id, body);
       res.json(data);
     } catch (error) {
       next(error);
@@ -81,7 +81,7 @@ router.patch(
 
 router.delete('/:id', async (req, res) => {
   const { id } = req.params;
-  const resp = await service.delete(id);
+  const resp = await service.deleteDB(id);
   res.json(resp);
 });
 

@@ -21,6 +21,7 @@ const createCategoryDto = Joi.object({
   icon: icon.required(),
 });
 const updateCategoryDto = Joi.object({
+  id: id.optional().allow(null).allow(''),
   categoryId: categoryId,
   name: name,
   userId: userId,
