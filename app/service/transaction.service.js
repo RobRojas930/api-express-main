@@ -68,12 +68,13 @@ class TransactionService {
         id = id.toString().replace(/[^a-zA-Z0-9]/g, '');
         let transaction = await Model.findOne({ _id: id });
         const transactionOriginal = { ...transaction._doc };
-        const { title, amount, date, category, description } = changes;
+        const { title, amount, date, category, description, type } = changes;
         transaction.title = title;
         transaction.amount = amount;
         transaction.date = date;
         transaction.category = category;
         transaction.description = description;
+        transaction.type = type;
         await transaction.save();
 
         return {

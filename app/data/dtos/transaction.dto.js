@@ -12,7 +12,7 @@ const userId = Joi.string();
 
 const createTransactionDto = Joi.object({
     id: id.optional().allow(null).allow(''),
-    userId: userId.required(),
+    userId: userId.optional().allow(null).allow(''),
     title: title.required(),
     description: description.required(),
     amount: amount.required(),
@@ -22,7 +22,7 @@ const createTransactionDto = Joi.object({
 });
 
 const updateTransactionDto = Joi.object({
-    userId: userId,
+    userId: userId.optional().allow(null).allow(''),
     title: title,
     description: description,
     amount: amount,

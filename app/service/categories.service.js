@@ -55,9 +55,19 @@ class CategoryService {
     let categoryOriginal = {
       name: category.name,
       id: category.id,
+      categoryId: category.categoryId,
+      description: category.description,
+      color: category.color,
+      icon: category.icon,
+      userId: category.userId,
     };
-    const { name } = changes;
+    const { name, categoryId, description, color, icon, userId } = changes;
     category.name = name;
+    category.categoryId = categoryId;
+    category.description = description;
+    category.color = color;
+    category.icon = icon;
+    category.userId = userId;
     category.save();
 
     return {

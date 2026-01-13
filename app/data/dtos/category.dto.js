@@ -14,7 +14,7 @@ const userId = Joi.string();
 const createCategoryDto = Joi.object({
   id: id.optional().allow(null).allow(''),
   categoryId: categoryId.optional().allow(null).allow(''),
-  userId: userId.required(),
+  userId: userId.optional().allow(null).allow(''),
   name: name.required(),
   description: description.required(),
   color: color.required(),
@@ -24,7 +24,7 @@ const updateCategoryDto = Joi.object({
   id: id.optional().allow(null).allow(''),
   categoryId: categoryId,
   name: name,
-  userId: userId,
+  userId: userId.optional().allow(null).allow(''),
   description: description,
   color: color,
   icon: icon,

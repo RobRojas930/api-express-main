@@ -65,10 +65,14 @@ class BudgetService {
             _id: id,
         });
         let budgetOriginal = budget;
-        const { title, initialAmount, currentAmount } = changes;
+        const { title, initialAmount, currentAmount, percentage, userId, categoryId, color } = changes;
         budget.title = title;
         budget.initialAmount = initialAmount;
         budget.currentAmount = currentAmount;
+        budget.percentage = percentage;
+        budget.userId = userId;
+        budget.categoryId = categoryId;
+        budget.color = color;
         budget.save();
 
         return {
