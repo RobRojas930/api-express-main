@@ -1,5 +1,6 @@
 const boom = require('@hapi/boom');
 const Model = require('../data/models/transaction.model');
+const { CategoryModel } = require('../data/models/category.model');
 const CategoryService = require('./categories.service');
 const categoryService = new CategoryService();
 
@@ -47,6 +48,22 @@ class TransactionService {
 
         }
         let transactionDB = await Model.find(filterData);
+
+        for (let i = 0; i < transactionDB.length; i++) {
+            let categoryBudget = await CategoryModel.findOne({ _id: transactionDB[i].category[0].id, userId: transactionDB[i].userId });
+            if (!categoryBudget) {
+                transactionDB[i].category = {
+                    categoryId: '',
+                    name: 'General',
+                    description: 'General category',
+                    color: '#000000',
+                    icon: 'default-icon',
+                };
+                await transactionDB[i].save();
+            }
+
+        }
+
         transactionDB = limit
             ? transactionDB.filter((item, index) => item && index < limit)
             : transactionDB;

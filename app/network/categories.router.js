@@ -79,10 +79,14 @@ router.patch(
   }
 );
 
-router.delete('/:id', async (req, res) => {
-  const { id } = req.params;
-  const resp = await service.deleteDB(id);
-  res.json(resp);
+router.delete('/:id', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const resp = await service.deleteDB(id);
+    res.json(resp);
+  } catch (error) {
+    next(error);
+  }
 });
 
 //OBTENER  CATEGORIAS DE PRODUCTOS

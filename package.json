@@ -27,6 +27,7 @@
     "dotenv": "^16.0.3",
     "express": "^4.17.2",
     "joi": "^17.6.0",
+    "joi-es": "^11.3.0",
     "joi-password": "^4.0.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.2.2",

@@ -1,6 +1,4 @@
 const Joi = require('joi');
-
-
 //SCHEMA PARA DATOS REQUERIDOS Y LOGICA DE NEGOCIO
 const id = Joi.string();
 const categoryId = Joi.string();

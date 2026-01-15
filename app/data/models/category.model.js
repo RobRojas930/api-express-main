@@ -12,5 +12,5 @@ const categorySchema = new Schema({
   icon: String,
   userId: String,
 });
-const Model = mongoose.model('categories', categorySchema);
-module.exports = { Model, categorySchema };
+const CategoryModel = mongoose.model('categories', categorySchema);
+module.exports = { CategoryModel, categorySchema };

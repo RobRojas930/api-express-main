@@ -2,10 +2,9 @@
 const boom = require('@hapi/boom');
 const Model = require('../data/models/product.model');
 
-const { validateData, NOTFOUND, CONFLICT } = require('../utils/utils');
 
 class ProductMediaService {
-  constructor() {}
+  constructor() { }
 
   async createDB(data) {
     const model = new Model(data);
@@ -24,7 +23,7 @@ class ProductMediaService {
 
     return response;
   }
-  
+
   async findOneDB(id) {
     const product = await Model.findOne({
       _id: id,

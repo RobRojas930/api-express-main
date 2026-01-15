@@ -2,6 +2,7 @@
 const boom = require('@hapi/boom');
 
 const Model = require('../data/models/budget.model');
+const { CategoryModel } = require('../data/models/category.model');
 const TransactionModel = require('../data/models/transaction.model');
 
 class BudgetService {
@@ -22,6 +23,15 @@ class BudgetService {
         }
 
         let budgetDB = await Model.find(filterData);
+
+        for (const i = 0; i < budgetDB.length; i++) {
+            let categoryBudget = await CategoryModel.findOne({ categoryId: budgetDB[i].categoryId, userId: budgetDB[i].userId });
+            if (!categoryBudget) {
+                budgetDB[i].categoryId = '';
+                await budgetDB[i].save();
+            }
+        }
+
         budgetDB = limit
             ? budgetDB.filter((item, index) => item && index < limit)
             : budgetDB;
@@ -45,7 +55,7 @@ class BudgetService {
 
     async createDB(data) {
 
-        const newData = 
+        const newData =
         {
             title: data.title,
             initialAmount: data.initialAmount,
@@ -122,7 +132,7 @@ class BudgetService {
             // Filtrar por categoryId usando optional chaining
             const transactionsByCategoryId = transactions.filter(t => {
                 // Verificar si category es array o objeto
-                const categoryId = t.category[0]?.categoryId.toString() || t.category?.categoryId?.toString();
+                const categoryId = t.category[0]?.categoryId?.toString() || t.category?.categoryId?.toString();
                 return categoryId === budget.categoryId;
             });
 
