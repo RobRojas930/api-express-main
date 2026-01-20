@@ -50,7 +50,8 @@ class TransactionService {
         let transactionDB = await Model.find(filterData);
 
         for (let i = 0; i < transactionDB.length; i++) {
-            let categoryBudget = await CategoryModel.findOne({ _id: transactionDB[i].category[0].id, userId: transactionDB[i].userId });
+            const catId = transactionDB[i].category[0]?.categoryId || transactionDB[i].category[0]?._id;
+            let categoryBudget = await CategoryModel.findOne({ _id: catId, userId: transactionDB[i].userId });
             if (!categoryBudget) {
                 transactionDB[i].category = {
                     categoryId: '',

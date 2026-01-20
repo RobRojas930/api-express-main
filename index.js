@@ -16,18 +16,21 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 //OPCIONES DE LISTA BLANCA (ORIGENES PERMITIDOS) DEL CORS
-const whitelist = ['http://localhost:8080', 'https://myapp.co'];
+const whitelist = ['http://localhost:8080', 'https://myapp.co', 'http://localhost:3000', 'http://localhost:3001'];
 const options = {
   origin: (origin, callback) => {
-    if (whitelist.includes(origin)|| !origin) {
+    if (whitelist.includes(origin) || !origin) {
       callback(null, true);
     } else {
       callback(new Error('no permitido'));
     }
   },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
 };
 
-app.use(cors(options));
+app.use(cors());
 app.use(
   express.json(
     { extended: false } // permite codificar matrices y objetos enriquecidos en formato codificado en url

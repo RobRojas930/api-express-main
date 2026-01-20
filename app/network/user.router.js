@@ -117,7 +117,4 @@ router.get('/history/:id', validatorHandler(getTransactionIdDto, 'params'),
   });
 
 
-
-
-
 module.exports = router;
