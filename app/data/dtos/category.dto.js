@@ -8,6 +8,7 @@ const description = Joi.string().min(3).max(100);
 const color = Joi.string().min(3).max(30);
 const icon = Joi.string().min(3).max(50);
 const userId = Joi.string();
+const accountId = Joi.string();
 
 const createCategoryDto = Joi.object({
   id: id.optional().allow(null).allow(''),
@@ -17,6 +18,7 @@ const createCategoryDto = Joi.object({
   description: description.required(),
   color: color.required(),
   icon: icon.required(),
+  accountId: accountId.optional().allow(null).allow(''),
 });
 const updateCategoryDto = Joi.object({
   id: id.optional().allow(null).allow(''),
@@ -26,6 +28,7 @@ const updateCategoryDto = Joi.object({
   description: description,
   color: color,
   icon: icon,
+  accountId: accountId.optional().allow(null).allow(''),
 });
 
 const getCategoryIdDto = Joi.object({

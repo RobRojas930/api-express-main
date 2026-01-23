@@ -7,6 +7,7 @@ const date = Joi.date();
 const type = Joi.string().valid('income', 'expense');
 const category = Joi.object();
 const userId = Joi.string();
+const accountId = Joi.string();
 
 const createTransactionDto = Joi.object({
     id: id.optional().allow(null).allow(''),
@@ -34,6 +35,7 @@ const createTransactionDto = Joi.object({
         'any.only': 'El tipo debe ser "income" o "expense".',
     }),
     category: category.optional(),
+    accountId: accountId.optional().allow(null).allow(''),
 });
 
 const updateTransactionDto = Joi.object({
@@ -44,6 +46,7 @@ const updateTransactionDto = Joi.object({
     date: date,
     type: type,
     category: category,
+    accountId: accountId.optional().allow(null).allow(''),
 });
 
 const getTransactionIdDto = Joi.object({
