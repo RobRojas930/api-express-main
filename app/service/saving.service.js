@@ -1,4 +1,4 @@
-const Model = require('../model/saving.model');
+const Model = require('../data/models/saving.model');
 
 class SavingService {
     // Crear un nuevo saving

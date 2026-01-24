@@ -1,6 +1,6 @@
 const express = require('express');
 const Boom = require('@hapi/boom');
-const DeptService = require('../services/dept.service');
+const DeptService = require('../service/dept.service');
 
 const router = express.Router();
 const service = new DeptService();

@@ -1,6 +1,6 @@
 const express = require('express');
 const Boom = require('@hapi/boom');
-const TemplateService = require('../services/template.service');
+const TemplateService = require('../service/template.service');
 
 const router = express.Router();
 const service = new TemplateService();
@@ -69,4 +69,4 @@ router.delete('/:id', async (req, res, next) => {
     }
 });
 
-module.exports = router;
+module.exports = router;    

@@ -1,6 +1,6 @@
 const express = require('express');
 const Boom = require('@hapi/boom');
-const SavingService = require('../services/saving.service');
+const SavingService = require('../service/saving.service');
 
 const router = express.Router();
 const service = new SavingService();

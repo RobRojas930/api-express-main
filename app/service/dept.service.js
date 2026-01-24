@@ -1,4 +1,4 @@
-const Model = require('../model/dept.model');
+const Model = require('../data/models/dept.model');
 
 class DeptServiceDB {
   async createDB(data) {

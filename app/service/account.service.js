@@ -1,4 +1,4 @@
-const Model = require('../model/account.model');
+const Model = require('../data/models/account.model');
 
 class AccountService {
     // Crear una nueva cuenta
